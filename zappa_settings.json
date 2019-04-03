@@ -1,0 +1,16 @@
+{
+    "dev": {
+        "django_settings": "RetubeAPI.settings",
+        "profile_name": "almond",
+        "project_name": "retubeapi",
+        "runtime": "python3.7",
+        "s3_bucket": "zappa-retube-dev"
+    },
+    "prod": {
+        "django_settings": "RetubeAPI.prod_settings",
+        "profile_name": "almond",
+        "project_name": "retubeapi",
+        "runtime": "python3.7",
+        "s3_bucket": "zappa-retube-prod"
+    }
+}
