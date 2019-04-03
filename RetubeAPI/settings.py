@@ -47,6 +47,10 @@ INSTALLED_APPS = [
 
     'zappa_django_utils',
     'storages',
+    'rest_framework',
+    'rest_framework_simplejwt',
+
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -137,3 +141,11 @@ AWS_STORAGE_BUCKET_NAME = 'zappa-retube-dev'
 AWS_S3_CUSTOM_DOMAIN = '{}.s3.amazonaws.com'.format(AWS_STORAGE_BUCKET_NAME)
 STATIC_URL = 'https://{}/'.format(AWS_S3_CUSTOM_DOMAIN)
 STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
