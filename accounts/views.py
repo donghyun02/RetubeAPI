@@ -87,3 +87,10 @@ class LoginView(APIView):
             'access': str(refresh.access_token)
         }
 
+class UserInfoView(APIView):
+
+    def get(self, request):
+        status = 200
+        message = '확인된 사용자입니다.'
+        name = request.user.first_name
+        return Response({'message': message, 'name': name}, status=status)

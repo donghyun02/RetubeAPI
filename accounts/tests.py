@@ -2,9 +2,11 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 # Create your tests here.
 from django.urls import reverse
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class RegisterViewTests(TestCase):
+
     def test_no_data(self):
         """
         아이디, 비밀번호, 이름이 전송되지 않았을 경우
@@ -88,6 +90,7 @@ class RegisterViewTests(TestCase):
 
 
 class LoginViewTests(TestCase):
+
     def test_no_username(self):
         """
         존재하지 않는 아이디일 경우
@@ -133,3 +136,49 @@ class LoginViewTests(TestCase):
         response = self.client.post(reverse('login'), data=data, content_type='application/json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data.get('message', None), '로그인에 성공하였습니다.')
+
+
+def create_access_jwt(user):
+    refresh = RefreshToken.for_user(user)
+    return str(refresh.access_token)
+
+
+class UserInfoViewTests(TestCase):
+
+    def test_no_jwt(self):
+        """
+        JWT 가 헤더에 포함되어 있지 않은 경우
+        """
+        response = self.client.get(reverse('user-info'))
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.data.get('detail', None), 'Authentication credentials were not provided.')
+
+    def test_jwt_invalid_or_expired(self):
+        """
+        JWT 가 만료되거나 잘못된 경우
+        """
+        jwt = 'somethingwrongjwt'
+        headers = {
+            'HTTP_AUTHORIZATION': 'Bearer {}'.format(jwt)
+        }
+        response = self.client.get(reverse('user-info'), **headers)
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.data.get('detail', None), 'Given token not valid for any token type')
+
+    def test_success(self):
+        """
+        요청에 성공한 경우
+        """
+        username = 'username'
+        password = 'password'
+        name = 'name'
+        user = User.objects.create_user(username=username, password=password, first_name=name)
+        jwt = create_access_jwt(user)
+        headers = {
+            'HTTP_AUTHORIZATION': 'Bearer {}'.format(jwt)
+        }
+
+        response = self.client.get(reverse('user-info'), **headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data.get('message', None), '확인된 사용자입니다.')
+        self.assertEqual(response.data.get('name', None), 'name')
