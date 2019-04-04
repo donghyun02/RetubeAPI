@@ -43,7 +43,7 @@ class RegisterView(APIView):
         message = '회원가입이 완료되었습니다.'
         return Response({'message': message}, status=status)
 
-class LoginView(APIView):
-    def get(self, request):
-        pass
+# class LoginView(APIView):
+#     def get(self, request):
+#         pass
 
