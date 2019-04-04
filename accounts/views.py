@@ -33,12 +33,9 @@ class RegisterView(APIView):
             message = '이름을 입력해주세요.'
             return Response({'message': message}, status=status)
 
-        # 아이디가 이미 존재할 경우
+        # 아이디가 이미 존재하는지 검사
         try:
             User.objects.get(username=username)
-            status = 400
-            message = '이미 존재하는 아이디입니다.'
-            return Response({'message': message}, status=status)
 
         # 아이디가 없을 경우 회원가입
         except User.DoesNotExist:
@@ -47,10 +44,11 @@ class RegisterView(APIView):
             message = '회원가입이 완료되었습니다.'
             return Response({'message': message}, status=status)
 
-        except:
-            status = 500
-            message = '확인되지 않은 오류, RegisterView-POST'
-            return  Response({'message': message}, status=status)
+        # 아이디가 존재할 경우
+        else:
+            status = 400
+            message = '이미 존재하는 아이디입니다.'
+            return Response({'message': message}, status=status)
 
 
 class LoginView(APIView):
@@ -60,9 +58,18 @@ class LoginView(APIView):
         username = request.data.get('username', None)
         password = request.data.get('password', None)
 
-        # 유저가 존재할 경우
+        # 유저가 존재하는지 검사
         try:
             User.objects.get(username=username)
+
+        # 유저가 존재하지 않을 경우
+        except User.DoesNotExist:
+            status = 400
+            message = '존재하지 않는 아이디입니다.'
+            return Response({'message': message}, status=status)
+
+        # 유저가 존재할 경우
+        else:
             user = authenticate(username=username, password=password)
 
             # 비밀번호가 잘못된 경우
@@ -78,16 +85,6 @@ class LoginView(APIView):
                 message = '로그인에 성공하였습니다.'
                 return Response({'message': message, 'jwt': jwt}, status=status)
 
-        # 유저가 존재하지 않을 경우
-        except User.DoesNotExist:
-            status = 400
-            message = '존재하지 않는 아이디입니다.'
-            return Response({'message': message}, status=status)
-
-        except:
-            status = 500
-            message = '확인되지 않은 오류, LoginView-POST'
-            return Response({'message': message}, status=status)
 
     def create_jwt(self, user):
         refresh = RefreshToken.for_user(user)
