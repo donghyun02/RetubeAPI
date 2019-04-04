@@ -10,6 +10,7 @@ class RegisterViewTests(TestCase):
         아이디, 비밀번호, 이름이 전송되지 않았을 경우
         """
         data = {}
+
         response = self.client.post(reverse('register'), data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data.get('message', None), '아이디를 입력해주세요.')
@@ -22,6 +23,7 @@ class RegisterViewTests(TestCase):
             'password': 'password',
             'name': 'name'
         }
+
         response = self.client.post(reverse('register'), data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data.get('message', None), '아이디를 입력해주세요.')
@@ -34,6 +36,7 @@ class RegisterViewTests(TestCase):
             'username': 'username',
             'name': 'name'
         }
+
         response = self.client.post(reverse('register'), data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data.get('message', None), '비밀번호를 입력해주세요.')
@@ -46,6 +49,7 @@ class RegisterViewTests(TestCase):
             'username': 'username',
             'password': 'password',
         }
+
         response = self.client.post(reverse('register'), data=data, content_type='application/json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data.get('message', None), '이름을 입력해주세요.')
@@ -77,6 +81,7 @@ class RegisterViewTests(TestCase):
             'password': 'pass',
             'name': 'name'
         }
+
         response = self.client.post(reverse('register'), data=data, content_type='application/json')
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data.get('message', None), '회원가입이 완료되었습니다.')
@@ -87,16 +92,44 @@ class LoginViewTests(TestCase):
         """
         존재하지 않는 아이디일 경우
         """
-        pass
+        data = {
+            'username': 'username',
+            'password': 'password'
+        }
+
+        response = self.client.post(reverse('login'), data=data, content_type='application/json')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get('message', None), '존재하지 않는 아이디입니다.')
 
     def test_wrong_password(self):
         """
         비밀번호가 맞지 않을 경우
         """
-        pass
+        username = 'username'
+        password = 'password'
+        wrong_password = 'wrongpassword'
+        data = {
+            'username': username,
+            'password': wrong_password
+        }
+
+        User.objects.create_user(username=username, password=password)
+        response = self.client.post(reverse('login'), data=data, content_type='application/json')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get('message', None), '잘못된 비밀번호입니다.')
 
     def test_login_success(self):
         """
         로그인에 성공할 경우
         """
-        pass
+        username = 'username'
+        password = 'password'
+        data = {
+            'username': username,
+            'password': password
+        }
+
+        User.objects.create_user(username=username, password=password)
+        response = self.client.post(reverse('login'), data=data, content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data.get('message', None), '로그인에 성공하였습니다.')
