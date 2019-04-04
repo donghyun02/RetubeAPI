@@ -47,6 +47,11 @@ class RegisterView(APIView):
             message = '회원가입이 완료되었습니다.'
             return Response({'message': message}, status=status)
 
+        except:
+            status = 500
+            message = '확인되지 않은 오류, RegisterView-POST'
+            return  Response({'message': message}, status=status)
+
 
 class LoginView(APIView):
     permission_classes = (AllowAny, )
@@ -64,7 +69,7 @@ class LoginView(APIView):
             if user is None:
                 status = 400
                 message = '잘못된 비밀번호입니다.'
-                return Response({'message': message}, status)
+                return Response({'message': message}, status=status)
 
             # 로그인에 성공했을 경우
             else:
@@ -77,6 +82,11 @@ class LoginView(APIView):
         except User.DoesNotExist:
             status = 400
             message = '존재하지 않는 아이디입니다.'
+            return Response({'message': message}, status=status)
+
+        except:
+            status = 500
+            message = '확인되지 않은 오류, LoginView-POST'
             return Response({'message': message}, status=status)
 
     def create_jwt(self, user):
