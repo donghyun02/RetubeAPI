@@ -79,5 +79,25 @@ class RegisterViewTests(TestCase):
             'name': 'name'
         }
         response = self.client.post(reverse('register'), data=data, content_type='application/json')
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data.get('message', None), '회원가입이 완료되었습니다.')
+
+
+class LoginViewTests(TestCase):
+    def test_no_username(self):
+        """
+        존재하지 않는 아이디일 경우
+        """
+        pass
+
+    def test_wrong_password(self):
+        """
+        비밀번호가 맞지 않을 경우
+        """
+        pass
+
+    def test_login_success(self):
+        """
+        로그인에 성공할 경우
+        """
+        pass

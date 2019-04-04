@@ -39,7 +39,7 @@ class RegisterView(APIView):
             return Response({'message': message}, status=status)
 
         User.objects.create_user(username=username, password=password, first_name=name)
-        status = 200
+        status = 201
         message = '회원가입이 완료되었습니다.'
         return Response({'message': message}, status=status)
 
