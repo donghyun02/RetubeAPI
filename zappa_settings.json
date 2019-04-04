@@ -4,13 +4,21 @@
         "profile_name": "almond",
         "project_name": "retubeapi",
         "runtime": "python3.7",
-        "s3_bucket": "zappa-retube-dev"
+        "s3_bucket": "zappa-retube-dev",
+        "vpc_config" : {
+            "SubnetIds": ["subnet-8e7b5de6", "subnet-6431bb28"],
+            "SecurityGroupIds": ["sg-06ad959b1063e1472"]
+        }
     },
     "prod": {
         "django_settings": "RetubeAPI.prod_settings",
         "profile_name": "almond",
         "project_name": "retubeapi",
         "runtime": "python3.7",
-        "s3_bucket": "zappa-retube-prod"
+        "s3_bucket": "zappa-retube-prod",
+        "vpc_config" : {
+            "SubnetIds": ["subnet-8e7b5de6", "subnet-6431bb28"],
+            "SecurityGroupIds": ["sg-06ad959b1063e1472"]
+        }
     }
 }

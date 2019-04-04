@@ -16,17 +16,17 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_PATH = os.path.join(BASE_DIR, 'secret.json')
 
-def get_secret_key(secret_path):
-    with open(secret_path) as f:
-        secret_key = json.loads(f.read()).get('SECRET_KEY', '')
+def get_secret(path, key):
+    with open(path) as f:
+        secret = json.loads(f.read()).get(key, '')
 
-    return secret_key
+    return secret
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_secret_key(SECRET_PATH)
+SECRET_KEY = get_secret(SECRET_PATH, 'SECRET_KEY')
 # Endpoint: https://umjewv2r02.execute-api.ap-northeast-2.amazonaws.com/prod
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -84,14 +84,13 @@ WSGI_APPLICATION = 'RetubeAPI.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    # }
     'default': {
-        'ENGINE': 'zappa_django_utils.db.backends.s3sqlite',
-        'NAME': 'retube-prod.db',
-        'BUCKET': 'zappa-retube-prod'
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'common_db_instance',
+        'HOST': 'commondbinstance.ct0h18s6eh4y.ap-northeast-2.rds.amazonaws.com',
+        'PORT': '5432',
+        'USER': 'huey',
+        'PASSWORD': get_secret(SECRET_PATH, 'DB_PASSWORD')
     }
 }
 
@@ -133,7 +132,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 AWS_S3_HOST = 's3.ap-northeast-2.amazonaws.com'
-AWS_STORAGE_BUCKET_NAME = 'zappa-retube-prod'
+AWS_STORAGE_BUCKET_NAME = 'zappa-retube-dev'
 AWS_S3_CUSTOM_DOMAIN = '{}.s3.amazonaws.com'.format(AWS_STORAGE_BUCKET_NAME)
 STATIC_URL = 'https://{}/'.format(AWS_S3_CUSTOM_DOMAIN)
 STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ],
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+    )
+}
