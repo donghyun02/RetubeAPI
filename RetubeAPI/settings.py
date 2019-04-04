@@ -94,7 +94,10 @@ DATABASES = {
         'HOST': 'commondbinstance.ct0h18s6eh4y.ap-northeast-2.rds.amazonaws.com',
         'PORT': '5432',
         'USER': 'huey',
-        'PASSWORD': get_secret(SECRET_PATH, 'DB_PASSWORD')
+        'PASSWORD': get_secret(SECRET_PATH, 'DB_PASSWORD'),
+        'TEST': {
+            'NAME': 'test_db',
+        }
     }
 }
 
