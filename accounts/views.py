@@ -1,9 +1,5 @@
 from django.contrib.auth.models import User
-from django.http import JsonResponse
-from django.shortcuts import render
-
 # Create your views here.
-from django.views import View
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -46,4 +42,3 @@ class RegisterView(APIView):
 # class LoginView(APIView):
 #     def get(self, request):
 #         pass
-
