@@ -28,6 +28,11 @@ jobs:
             - v1-dependencies-
 
       - run:
+          name: My secrey key
+          command: |
+            echo $secrey_key
+
+      - run:
           name: install dependencies
           command: |
             python3.7 -m venv venv
