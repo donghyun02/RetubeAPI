@@ -41,7 +41,7 @@ jobs:
 
       - run:
           name: create secret.json
-          command: echo { "SECRET_KEY": "${SECRET_KEY}", "DB_PASSWORD": "${DB_PASSWORD}" } > secret.json
+          command: echo "{ "SECRET_KEY": "${SECRET_KEY}", "DB_PASSWORD": "${DB_PASSWORD}" }" | ./secret.json
 
       # run tests!
       # this example uses Django's built-in test-runner
