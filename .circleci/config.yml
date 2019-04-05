@@ -76,5 +76,5 @@ jobs:
               zappa update dev
             fi
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              zappa update production
+              zappa update prod
             fi
