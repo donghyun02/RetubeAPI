@@ -49,8 +49,8 @@ jobs:
           command: |
             echo "
             [almond]
-            aws_access_key_id = AKIAJZVPP3IUDVR6MIZA
-            aws_secret_access_key = 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
+            aws_access_key_id = ${AWS_ACCESS_KEY_ID}
+            aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}
             " > ~/.aws/credentials
 
       # run tests!
