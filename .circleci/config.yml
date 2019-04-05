@@ -30,7 +30,7 @@ jobs:
       - run:
           name: My secrey key
           command: |
-            echo $secrey_key
+            echo ${secrey_key}
 
       - run:
           name: install dependencies
