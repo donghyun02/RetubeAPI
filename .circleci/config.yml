@@ -28,10 +28,6 @@ jobs:
             - v1-dependencies-
 
       - run:
-          name: My secrey key
-          command: echo ${SECRET_KEY}
-
-      - run:
           name: install dependencies
           command: |
             python3.7 -m venv venv
@@ -42,6 +38,10 @@ jobs:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
+
+      - run:
+          name: create secret.json
+          command: echo "{ \"SECRET_KEY\": \"${SECRET_KEY}\", \"DB_PASSWORD\": \"${DB_PASSWORD}\" }" > secret.json
 
       # run tests!
       # this example uses Django's built-in test-runner
