@@ -62,7 +62,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            python manage.py test --with-coverage
+            python manage.py test --pattern="tests_*.py" --with-coverage
 
       - store_artifacts:
           path: test-reports
