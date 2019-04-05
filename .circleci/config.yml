@@ -43,8 +43,15 @@ jobs:
           name: create secret.json
           command: |
             echo { \"SECRET_KEY\": \"${SECRET_KEY}\", \"DB_PASSWORD\": \"${DB_PASSWORD}\" } > ./secret.json
-            ls
-            cat secret.json
+
+      - run:
+          name: create aws profile
+          command: |
+            echo "
+            [almond]
+            aws_access_key_id = AKIAJZVPP3IUDVR6MIZA
+            aws_secret_access_key = Kxj6HXqHM2QZMqQZQC6ROOLBa1+LkUVJ9N3CU3Ww
+            " > ~/.aws/credentials
 
       # run tests!
       # this example uses Django's built-in test-runner
