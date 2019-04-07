@@ -100,7 +100,7 @@ DATABASES = {
         'USER': 'huey',
         'PASSWORD': get_secret(SECRET_PATH, 'DB_PASSWORD'),
         'TEST': {
-            'NAME': 'test_db',
+            'NAME': 'dev_test_db',
         }
     }
 }
