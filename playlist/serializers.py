@@ -5,6 +5,7 @@ from playlist.models import Playlist, Song
 
 
 class SongSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Song
         fields = ('id', 'name', 'video_id', 'thumbnail', 'playlist', 'created')
