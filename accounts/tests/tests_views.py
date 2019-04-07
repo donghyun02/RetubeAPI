@@ -13,9 +13,16 @@ class RegisterViewTests(TestCase):
         """
         data = {}
 
-        response = self.client.post(reverse('register'), data=data, content_type='application/json')
+        response = self.client.post(
+            reverse('register'),
+            data=data,
+            content_type='application/json'
+        )
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data.get('message', None), '아이디를 입력해주세요.')
+        self.assertEqual(
+            response.data.get('message', None),
+            '아이디를 입력해주세요.'
+        )
 
     def test_no_username(self):
         """
@@ -26,9 +33,16 @@ class RegisterViewTests(TestCase):
             'name': 'name'
         }
 
-        response = self.client.post(reverse('register'), data=data, content_type='application/json')
+        response = self.client.post(
+            reverse('register'),
+            data=data,
+            content_type='application/json'
+        )
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data.get('message', None), '아이디를 입력해주세요.')
+        self.assertEqual(
+            response.data.get('message', None),
+            '아이디를 입력해주세요.'
+        )
 
     def test_no_password(self):
         """
@@ -39,9 +53,16 @@ class RegisterViewTests(TestCase):
             'name': 'name'
         }
 
-        response = self.client.post(reverse('register'), data=data, content_type='application/json')
+        response = self.client.post(
+            reverse('register'),
+            data=data,
+            content_type='application/json'
+        )
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data.get('message', None), '비밀번호를 입력해주세요.')
+        self.assertEqual(
+            response.data.get('message', None),
+            '비밀번호를 입력해주세요.'
+        )
 
     def test_no_name(self):
         """
@@ -52,9 +73,16 @@ class RegisterViewTests(TestCase):
             'password': 'password',
         }
 
-        response = self.client.post(reverse('register'), data=data, content_type='application/json')
+        response = self.client.post(
+            reverse('register'),
+            data=data,
+            content_type='application/json'
+        )
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data.get('message', None), '이름을 입력해주세요.')
+        self.assertEqual(
+            response.data.get('message', None),
+            '이름을 입력해주세요.'
+        )
 
     def test_already_exist(self):
         """
@@ -69,10 +97,21 @@ class RegisterViewTests(TestCase):
             'name': name
         }
 
-        User.objects.create_user(username=username, password=password, first_name=name)
-        response = self.client.post(reverse('register'), data=data, content_type='application/json')
+        User.objects.create_user(
+            username=username,
+            password=password,
+            first_name=name
+        )
+        response = self.client.post(
+            reverse('register'),
+            data=data,
+            content_type='application/json'
+        )
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data.get('message', None), '이미 존재하는 아이디입니다.')
+        self.assertEqual(
+            response.data.get('message', None),
+            '이미 존재하는 아이디입니다.'
+        )
 
     def test_register_success(self):
         """
@@ -84,9 +123,16 @@ class RegisterViewTests(TestCase):
             'name': 'name'
         }
 
-        response = self.client.post(reverse('register'), data=data, content_type='application/json')
+        response = self.client.post(
+            reverse('register'),
+            data=data,
+            content_type='application/json'
+        )
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.data.get('message', None), '회원가입이 완료되었습니다.')
+        self.assertEqual(
+            response.data.get('message', None),
+            '회원가입이 완료되었습니다.'
+        )
 
 
 class LoginViewTests(TestCase):
@@ -100,9 +146,16 @@ class LoginViewTests(TestCase):
             'password': 'password'
         }
 
-        response = self.client.post(reverse('login'), data=data, content_type='application/json')
+        response = self.client.post(
+            reverse('login'),
+            data=data,
+            content_type='application/json'
+        )
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data.get('message', None), '존재하지 않는 아이디입니다.')
+        self.assertEqual(
+            response.data.get('message', None),
+            '존재하지 않는 아이디입니다.'
+        )
 
     def test_wrong_password(self):
         """
@@ -117,9 +170,16 @@ class LoginViewTests(TestCase):
         }
 
         User.objects.create_user(username=username, password=password)
-        response = self.client.post(reverse('login'), data=data, content_type='application/json')
+        response = self.client.post(
+            reverse('login'),
+            data=data,
+            content_type='application/json'
+        )
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data.get('message', None), '잘못된 비밀번호입니다.')
+        self.assertEqual(
+            response.data.get('message', None),
+            '잘못된 비밀번호입니다.'
+        )
 
     def test_login_success(self):
         """
@@ -133,9 +193,16 @@ class LoginViewTests(TestCase):
         }
 
         User.objects.create_user(username=username, password=password)
-        response = self.client.post(reverse('login'), data=data, content_type='application/json')
+        response = self.client.post(
+            reverse('login'),
+            data=data,
+            content_type='application/json'
+        )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data.get('message', None), '로그인에 성공하였습니다.')
+        self.assertEqual(
+            response.data.get('message', None),
+            '로그인에 성공하였습니다.'
+        )
 
 
 def create_access_jwt(user):
@@ -151,7 +218,10 @@ class UserInfoViewTests(TestCase):
         """
         response = self.client.get(reverse('user-info'))
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.data.get('detail', None), 'Authentication credentials were not provided.')
+        self.assertEqual(
+            response.data.get('detail', None),
+            'Authentication credentials were not provided.'
+        )
 
     def test_jwt_invalid_or_expired(self):
         """
@@ -163,7 +233,10 @@ class UserInfoViewTests(TestCase):
         }
         response = self.client.get(reverse('user-info'), **headers)
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.data.get('detail', None), 'Given token not valid for any token type')
+        self.assertEqual(
+            response.data.get('detail', None),
+            'Given token not valid for any token type'
+        )
 
     def test_success(self):
         """
@@ -172,7 +245,11 @@ class UserInfoViewTests(TestCase):
         username = 'username'
         password = 'password'
         name = 'name'
-        user = User.objects.create_user(username=username, password=password, first_name=name)
+        user = User.objects.create_user(
+            username=username,
+            password=password,
+            first_name=name
+        )
         jwt = create_access_jwt(user)
         headers = {
             'HTTP_AUTHORIZATION': 'Bearer {}'.format(jwt)
@@ -180,5 +257,8 @@ class UserInfoViewTests(TestCase):
 
         response = self.client.get(reverse('user-info'), **headers)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data.get('message', None), '확인된 사용자입니다.')
+        self.assertEqual(
+            response.data.get('message', None),
+            '확인된 사용자입니다.'
+        )
         self.assertEqual(response.data.get('name', None), 'name')

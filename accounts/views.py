@@ -39,7 +39,11 @@ class RegisterView(APIView):
 
         # 아이디가 없을 경우 회원가입
         except User.DoesNotExist:
-            User.objects.create_user(username=username, password=password, first_name=name)
+            User.objects.create_user(
+                username=username,
+                password=password,
+                first_name=name
+            )
             status = 201
             message = '회원가입이 완료되었습니다.'
             return Response({'message': message}, status=status)
@@ -83,7 +87,10 @@ class LoginView(APIView):
                 jwt = self.create_jwt(user)
                 status = 200
                 message = '로그인에 성공하였습니다.'
-                return Response({'message': message, 'jwt': jwt}, status=status)
+                return Response(
+                    {'message': message, 'jwt': jwt},
+                    status=status
+                )
 
 
     def create_jwt(self, user):
