@@ -1,12 +1,12 @@
 from django.contrib.auth.models import User
+from django.test import TestCase
 from django.urls import reverse
-from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from playlist.models import Playlist
 
 
-class PlaylistsViewTests(APITestCase):
+class PlaylistsViewTests(TestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
@@ -30,26 +30,31 @@ class PlaylistsViewTests(APITestCase):
         ])
         response = self.client.get(self.url, **self.headers)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data.get('data', None)), 2)
+        self.assertEqual(response.data.get('message', None), '요청 성공')
 
     def test_post_no_name_response(self):
         """
         POST response 에서 파라미터에 name 필드가 없을 경우
         """
-        response = self.client.post(self.url, **self.headers)
-        self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.get('message', None), 'name 필드는 필수 필드입니다.')
+        response = self.client.post(self.url, content_type='application/json', **self.headers)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get('message', None), 'name 필드는 필수 필드입니다.')
 
     def test_post_success_response(self):
         """
         POST response 성공시
         """
+        name = 'TestPlaylist'
         data = {
-            'name': 'TestPlaylist'
+            'name': name
         }
-        response = self.client.post(self.url, data=data, **self.headers)
-        playlist = Playlist.objects.filter(user=self.user, name="TestPlaylist")
+        response = self.client.post(self.url, data=data, content_type='application/json', **self.headers)
+        print(response.status_code)
+        print(response.data)
+        playlist = Playlist.objects.filter(owner=self.user, name=name)
         self.assertEqual(response.status_code, 201)
         self.assertTrue(playlist.exists())
+        self.assertEqual(response.data.get('message', None), '요청 성공')
 
 

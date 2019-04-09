@@ -17,5 +17,26 @@ class PlaylistsView(APIView):
             .annotate(username=F('owner__first_name'))\
             .order_by('created')
         serializer = PlaylistSerializer(playlists, many=True)
+        response = {
+            'message': '요청 성공',
+            'data': serializer.data
+        }
         status = 200
-        return Response(serializer.data, status=status)
+        return Response(response, status=status)
+
+    def post(self, request):
+        name = request.data.get('name', None)
+
+        if name is None:
+            status = 400
+            message = 'name 필드는 필수 필드입니다.'
+            return Response({'message': message}, status=status)
+
+        playlist = Playlist.objects.create(name=name, owner=request.user)
+        serializer = PlaylistSerializer(playlist)
+        response = {
+            'message': '요청 성공',
+            'data': serializer.data
+        }
+        status = 201
+        return Response(response, status=status)
