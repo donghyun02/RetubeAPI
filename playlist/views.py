@@ -47,9 +47,6 @@ class PlaylistView(APIView):
     def get(self, request, playlist_id):
         pass
 
-    def post(self, request, playlist_id):
-        pass
-
     def put(self, request, playlist_id):
         pass
 

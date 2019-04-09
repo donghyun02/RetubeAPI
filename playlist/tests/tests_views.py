@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.shortcuts import resolve_url
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -37,9 +38,16 @@ class PlaylistsViewTests(TestCase):
         """
         POST response 에서 파라미터에 name 필드가 없을 경우
         """
-        response = self.client.post(self.url, content_type='application/json', **self.headers)
+        response = self.client.post(
+            self.url,
+            content_type='application/json',
+            **self.headers
+        )
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data.get('message', None), 'name 필드는 필수 필드입니다.')
+        self.assertEqual(
+            response.data.get('message', None),
+            'name 필드는 필수 필드입니다.'
+        )
 
     def test_post_success_response(self):
         """
@@ -49,7 +57,12 @@ class PlaylistsViewTests(TestCase):
         data = {
             'name': name
         }
-        response = self.client.post(self.url, data=data, content_type='application/json', **self.headers)
+        response = self.client.post(
+            self.url,
+            data=data,
+            content_type='application/json',
+            **self.headers
+        )
         print(response.status_code)
         print(response.data)
         playlist = Playlist.objects.filter(owner=self.user, name=name)
@@ -58,3 +71,49 @@ class PlaylistsViewTests(TestCase):
         self.assertEqual(response.data.get('message', None), '요청 성공')
 
 
+class PlaylistViewTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testusername",
+            password="testpassword",
+            first_name="testname"
+        )
+        self.jwt = str(RefreshToken.for_user(self.user).access_token)
+        self.headers = {
+            'HTTP_AUTHORIZATION': 'Bearer {}'.format(self.jwt)
+        }
+
+    def test_get_no_id_response(self):
+        """
+        playlist_id 파라미터를 보내지 않을 경우
+        """
+        url = reverse('playlist')
+        response = self.client.get(url, **self.headers)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.data.get('message', None),
+            'playlist_id 매개변수가 필요합니다.'
+        )
+
+    def test_get_no_object_response(self):
+        """
+        찾고자 하는 id의 오브젝트가 없을 경우
+        """
+        url = resolve_url('playlist', playlist_id=1)
+        response = self.client.get(url, **self.headers)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(
+            response.data.get('message', None),
+            '존재하지 않는 오브젝트입니다.'
+        )
+
+    def test_get_success_response(self):
+        Playlist.objects.create(name="test play list", owner=self.user)
+        url = resolve_url('playlist', playlist_id=1)
+        response = self.client.get(url, **self.headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data.get('message', None),
+            '요청 성공'
+        )
