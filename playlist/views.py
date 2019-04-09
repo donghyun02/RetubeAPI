@@ -45,7 +45,21 @@ class PlaylistsView(APIView):
 class PlaylistView(APIView):
 
     def get(self, request, playlist_id):
-        pass
+        try:
+            playlist = Playlist.objects.get(id=playlist_id)
+        except:
+            status = 404
+            message = '존재하지 않는 오브젝트입니다.'
+            return Response({'message': message}, status=status)
+        else:
+            serializer = PlaylistSerializer(playlist)
+            message = '요청 성공'
+            status = 200
+            response = {
+                'message': message,
+                'data': serializer.data
+            }
+            return Response(response, status=status)
 
     def put(self, request, playlist_id):
         pass

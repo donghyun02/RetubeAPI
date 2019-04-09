@@ -84,16 +84,17 @@ class PlaylistViewTests(TestCase):
             'HTTP_AUTHORIZATION': 'Bearer {}'.format(self.jwt)
         }
 
-    def test_get_no_id_response(self):
+    def test_get_success_response(self):
         """
-        playlist_id 파라미터를 보내지 않을 경우
+        요청에 성공했을 경우
         """
-        url = reverse('playlist')
+        playlist = Playlist.objects.create(name="test play list", owner=self.user)
+        url = resolve_url('playlist', playlist_id=playlist.id)
         response = self.client.get(url, **self.headers)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.data.get('message', None),
-            'playlist_id 매개변수가 필요합니다.'
+            '요청 성공'
         )
 
     def test_get_no_object_response(self):
@@ -108,12 +109,3 @@ class PlaylistViewTests(TestCase):
             '존재하지 않는 오브젝트입니다.'
         )
 
-    def test_get_success_response(self):
-        Playlist.objects.create(name="test play list", owner=self.user)
-        url = resolve_url('playlist', playlist_id=1)
-        response = self.client.get(url, **self.headers)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            response.data.get('message', None),
-            '요청 성공'
-        )
