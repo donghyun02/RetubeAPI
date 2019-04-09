@@ -40,3 +40,22 @@ class PlaylistsView(APIView):
         }
         status = 201
         return Response(response, status=status)
+
+
+class PlaylistView(APIView):
+
+    def get(self, request, playlist_id):
+        pass
+
+    def post(self, request, playlist_id):
+        pass
+
+    def put(self, request, playlist_id):
+        pass
+
+    def patch(self, request, playlist_id):
+        pass
+
+    def delete(self, request, playlist_id):
+        pass
+
