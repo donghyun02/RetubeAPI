@@ -61,9 +61,6 @@ class PlaylistView(APIView):
             }
             return Response(response, status=status)
 
-    def put(self, request, playlist_id):
-        pass
-
     def patch(self, request, playlist_id):
         pass
 

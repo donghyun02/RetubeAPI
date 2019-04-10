@@ -84,9 +84,21 @@ class PlaylistViewTests(TestCase):
             'HTTP_AUTHORIZATION': 'Bearer {}'.format(self.jwt)
         }
 
+    def test_get_no_object_response(self):
+        """
+        GET 메서드 요청에서 찾고자 하는 id의 오브젝트가 없을 경우
+        """
+        url = resolve_url('playlist', playlist_id=1)
+        response = self.client.get(url, **self.headers)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(
+            response.data.get('message', None),
+            '존재하지 않는 오브젝트입니다.'
+        )
+
     def test_get_success_response(self):
         """
-        요청에 성공했을 경우
+        GET 메서드 요청에 성공했을 경우
         """
         playlist = Playlist.objects.create(name="test play list", owner=self.user)
         url = resolve_url('playlist', playlist_id=playlist.id)
@@ -97,15 +109,39 @@ class PlaylistViewTests(TestCase):
             '요청 성공'
         )
 
-    def test_get_no_object_response(self):
+
+    def test_patch_no_object_response(self):
         """
-        찾고자 하는 id의 오브젝트가 없을 경우
+        PATCH 메서드 요청에서 오브젝트가 존재하지 않을 경우
         """
         url = resolve_url('playlist', playlist_id=1)
-        response = self.client.get(url, **self.headers)
+        response = self.client.patch(url, **self.headers)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(
             response.data.get('message', None),
             '존재하지 않는 오브젝트입니다.'
         )
+
+    def test_patch_success_response(self):
+        """
+        PATCH 메서드 요청에 성공했을 때
+        """
+        playlist = Playlist.objects.create(
+            name="Created Playlist",
+            owner=self.user
+        )
+        name = 'Changed Playlist'
+        data = {
+            'name': name
+        }
+        url = resolve_url('playlist', playlist_id=playlist.id)
+        response = self.client.patch(
+            url,
+            data=data,
+            content_type='application/json',
+            **self.headers
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data.get('message', None), '요청 성공')
+        self.assertEqual(playlist.name, name)
 
