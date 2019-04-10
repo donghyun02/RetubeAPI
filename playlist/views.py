@@ -28,10 +28,12 @@ class PlaylistsView(APIView):
         name = request.data.get('name', None)
 
         if name is None:
+            # request에 name 필드가 없을 경우
             status = 400
             message = 'name 필드는 필수 필드입니다.'
             return Response({'message': message}, status=status)
 
+        # name 필드가 있을 경우
         playlist = Playlist.objects.create(name=name, owner=request.user)
         serializer = PlaylistSerializer(playlist)
         response = {
@@ -46,14 +48,17 @@ class PlaylistView(APIView):
 
     def get(self, request, playlist_id):
         try:
+            # 요청 받은 id를 가진 오브젝트가 있는 지 검사
             playlist = Playlist.objects.get(id=playlist_id)
 
         except:
+            # 오브젝트가 없을 경우
             status = 404
             message = '존재하지 않는 오브젝트입니다.'
             return Response({'message': message}, status=status)
 
         else:
+            # 오브젝트가 있을 경우
             serializer = PlaylistSerializer(playlist)
             message = '요청 성공'
             status = 200
@@ -67,19 +72,23 @@ class PlaylistView(APIView):
         name = request.data.get('name', None)
 
         if name is None:
+            # name 필드가 없을 경우
             status = 400
             message = '변경할 필드가 포함되어 있지 않은 요청입니다.'
             return Response({'message': message}, status=status)
 
         try:
+            # name 필드가 있을 경우 업데이트할 오브젝트가 존재하는 지 검사
             playlist = Playlist.objects.get(id=playlist_id)
 
         except:
+            # 오브젝트가 존재하지 않을 경우
             status = 404
             message = '존재하지 않는 오브젝트입니다.'
             return Response({'message': message}, status=status)
 
         else:
+            # 오브젝트가 존재할 경우 업데이트
             serializer = PlaylistSerializer(
                 playlist,
                 data={'name': name},
