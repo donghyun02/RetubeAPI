@@ -212,5 +212,4 @@ class PlaylistViewTests(TestCase):
             response.data.get('message', None),
             '요청 성공'
         )
-        playlist.refresh_from_db()
-        self.assertIsNone(playlist)
+        self.assertFalse(Playlist.objects.filter(id=playlist.id).exists())

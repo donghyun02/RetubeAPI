@@ -112,5 +112,25 @@ class PlaylistView(APIView):
                 return Response({'message': message}, status=status)
 
     def delete(self, request, playlist_id):
-        pass
+        try:
+            # 오브젝트가 있는 지 검사
+            playlist = Playlist.objects.get(id=playlist_id)
 
+        except:
+            # 오브젝트가 없을 경우 404 리턴
+            status = 404
+            message = '존재하지 않는 오브젝트입니다.'
+            return Response({'message': message}, status=status)
+
+        else:
+            # 오브젝트가 있을 경우 삭제
+            serializer = PlaylistSerializer(playlist)
+            playlist.delete()
+
+            status = 200
+            message = '요청 성공'
+            response = {
+                'message': message,
+                'data': serializer.data
+            }
+            return Response(response, status=status)
