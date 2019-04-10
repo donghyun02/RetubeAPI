@@ -47,10 +47,12 @@ class PlaylistView(APIView):
     def get(self, request, playlist_id):
         try:
             playlist = Playlist.objects.get(id=playlist_id)
+
         except:
             status = 404
             message = '존재하지 않는 오브젝트입니다.'
             return Response({'message': message}, status=status)
+
         else:
             serializer = PlaylistSerializer(playlist)
             message = '요청 성공'
@@ -63,6 +65,7 @@ class PlaylistView(APIView):
 
     def patch(self, request, playlist_id):
         name = request.data.get('name', None)
+
         if name is None:
             status = 400
             message = '변경할 필드가 포함되어 있지 않은 요청입니다.'
@@ -70,23 +73,34 @@ class PlaylistView(APIView):
 
         try:
             playlist = Playlist.objects.get(id=playlist_id)
+
         except:
             status = 404
             message = '존재하지 않는 오브젝트입니다.'
             return Response({'message': message}, status=status)
+
         else:
-            playlist.name = name
-            playlist.save()
+            serializer = PlaylistSerializer(
+                playlist,
+                data={'name': name},
+                partial=True
+            )
 
-            status = 200
-            serializer = PlaylistSerializer(playlist)
-            message = '요청 성공'
+            if serializer.is_valid():
+                serializer.save()
 
-            response = {
-                'message': message,
-                'data': serializer.data
-            }
-            return Response(response, status=status)
+                status = 200
+                message = '요청 성공'
+                response = {
+                    'message': message,
+                    'data': serializer.data
+                }
+                return Response(response, status=status)
+
+            else:
+                status = 400
+                message = '잘못된 요청입니다.'
+                return Response({'message': message}, status=status)
 
     def delete(self, request, playlist_id):
         pass

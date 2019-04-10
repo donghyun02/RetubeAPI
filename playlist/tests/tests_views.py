@@ -167,3 +167,20 @@ class PlaylistViewTests(TestCase):
         self.assertEqual(response.data.get('message', None), '요청 성공')
         self.assertEqual(playlist.name, name)
 
+    def test_patch_over_length_of_name_field(self):
+        """
+        PATCH 메서드 요청에서 name 필드의 max_length를 넘는 요청이 올 경우
+        """
+        playlist = Playlist.objects.create(name="Test", owner=self.user)
+        data = {
+            'name': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+        }
+        url = resolve_url('playlist', playlist_id=playlist.id)
+        response = self.client.patch(
+            url,
+            data=data,
+            content_type='application/json',
+            **self.headers
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get('message', None), '잘못된 요청입니다.')
