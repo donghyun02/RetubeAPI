@@ -114,8 +114,16 @@ class PlaylistViewTests(TestCase):
         """
         PATCH 메서드 요청에서 오브젝트가 존재하지 않을 경우
         """
+        data = {
+            'name': 'Test Name'
+        }
         url = resolve_url('playlist', playlist_id=1)
-        response = self.client.patch(url, **self.headers)
+        response = self.client.patch(
+            url,
+            data=data,
+            content_type='application/json',
+            **self.headers
+        )
         self.assertEqual(response.status_code, 404)
         self.assertEqual(
             response.data.get('message', None),
@@ -154,6 +162,7 @@ class PlaylistViewTests(TestCase):
             content_type='application/json',
             **self.headers
         )
+        playlist.refresh_from_db()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data.get('message', None), '요청 성공')
         self.assertEqual(playlist.name, name)
