@@ -122,6 +122,19 @@ class PlaylistViewTests(TestCase):
             '존재하지 않는 오브젝트입니다.'
         )
 
+    def test_patch_no_data_response(self):
+        """
+        PATCH 메서드 요청에서 데이터가 존재하지 않을 경우
+        """
+        playlist = Playlist.objects.create(name="New Playlist", owner=self.user)
+        url = resolve_url('playlist', playlist_id=playlist.id)
+        response = self.client.patch(url, **self.headers)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.data.get('message', None),
+            '변경할 필드가 포함되어 있지 않은 요청입니다.'
+        )
+
     def test_patch_success_response(self):
         """
         PATCH 메서드 요청에 성공했을 때

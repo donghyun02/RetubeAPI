@@ -62,6 +62,13 @@ class PlaylistView(APIView):
             return Response(response, status=status)
 
     def patch(self, request, playlist_id):
+        # try:
+        #     playlist = Playlist.objects.get(id=playlist_id)
+        # except:
+        #     status = 404
+        #     message = '존재하지 않는 오브젝트입니다.'
+        #     return Response({'message': message}, status=status)
+        # else:
         pass
 
     def delete(self, request, playlist_id):
