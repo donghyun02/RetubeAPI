@@ -184,3 +184,33 @@ class PlaylistViewTests(TestCase):
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data.get('message', None), '잘못된 요청입니다.')
+
+    def test_delete_no_object_response(self):
+        """
+        DELETE 메서드 요청에서 오브젝트가 존재하지 않을 경우
+        """
+        url = resolve_url('playlist', playlist_id=1)
+        response = self.client.delete(url, **self.headers)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(
+            response.data.get('message', None),
+            '존재하지 않는 오브젝트입니다.'
+        )
+
+    def test_delete_success_response(self):
+        """
+        DELETE 메서드 요청에 성공할 경우
+        """
+        playlist = Playlist.objects.create(
+            name="Test Playlist",
+            owner=self.user
+        )
+        url = resolve_url('playlist', playlist_id=playlist.id)
+        response = self.client.delete(url, **self.headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data.get('message', None),
+            '요청 성공'
+        )
+        playlist.refresh_from_db()
+        self.assertIsNone(playlist)
