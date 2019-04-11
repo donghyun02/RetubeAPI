@@ -189,26 +189,7 @@ class SongsView(APIView):
         return Response(response, status=status)
 
 
-# class SongView(APIView):
-#
-#     def patch(self, request, song_id):
-#         try:
-#             # Song 오브젝트가 있는 지 검사
-#             song = Song.objects.select_related('playlists').get(id=song_id)
-#
-#         except:
-#             # 없을 경우 404 리턴
-#             status = 404
-#             message = '존재하지 않는 Song 오브젝트입니다.'
-#             return Response({'message': message}, status=status)
-#
-#         playlist_id = request.data.get('playlist_id', None)
-#
-#         if playlist_id is None:
-#             # playlist_id 필드가 없을 경우 400 리턴
-#             status = 400
-#             message = 'playlist_id 는 필수 필드입니다.'
-#             return Response({'message': message}, status=status)
-#
-#
-#
+class SongView(APIView):
+
+    def delete(self, request, song_id):
+        pass
