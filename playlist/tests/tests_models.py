@@ -75,8 +75,8 @@ class SongTests(TestCase):
             name="Song",
             video_id="test_video_id",
             thumbnail="https://thumbnail.url",
-            playlist=playlist
         )
+        self.song.playlists.add(playlist)
 
     def test_verbose_name(self):
         """
@@ -112,13 +112,13 @@ class SongTests(TestCase):
         self.assertTrue(field, models.TextField)
         self.assertEqual(field.verbose_name, 'thumbnail')
 
-    def test_playlist_field(self):
+    def test_playlists_field(self):
         """
-        playlist 필드 테스트
+        playlists 필드 테스트
         """
-        field = self.song._meta.get_field('playlist')
-        self.assertTrue(field, models.ForeignKey)
-        self.assertEqual(field.verbose_name, 'playlist')
+        field = self.song._meta.get_field('playlists')
+        self.assertTrue(field, models.ManyToManyField)
+        self.assertEqual(field.verbose_name, 'playlists')
         self.assertEqual(field.related_model, Playlist)
 
     def test_created_field(self):

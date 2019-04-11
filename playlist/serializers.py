@@ -17,7 +17,7 @@ class SongSerializer(serializers.ModelSerializer):
         )
 
 class PlaylistSerializer(serializers.ModelSerializer):
-    songs = SongSerializer(read_only=True, many=True)
+    songs = SongSerializer(read_only=True, many=True, allow_null=True)
     username = serializers.CharField(read_only=True)
 
     class Meta:

@@ -125,11 +125,9 @@ class PlaylistView(APIView):
         else:
             # 오브젝트가 있을 경우 삭제
             playlist.delete()
-            serializer = PlaylistSerializer(playlist)
             status = 200
             message = '요청 성공'
             response = {
-                'message': message,
-                'data': serializer.data
+                'message': message
             }
             return Response(response, status=status)

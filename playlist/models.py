@@ -17,7 +17,11 @@ class Song(models.Model):
     name = models.CharField(max_length=256)
     video_id = models.CharField(max_length=32, unique=True)
     thumbnail = models.TextField()
-    playlist = models.ForeignKey(Playlist, related_name="songs", on_delete=models.CASCADE)
+    playlists = models.ManyToManyField(
+        Playlist,
+        related_name="songs",
+        blank=True
+    )
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
