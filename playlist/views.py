@@ -5,8 +5,8 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from playlist.models import Playlist
-from playlist.serializers import PlaylistSerializer
+from playlist.models import Playlist, Song
+from playlist.serializers import PlaylistSerializer, SongSerializer
 
 
 class PlaylistsView(APIView):
@@ -127,7 +127,56 @@ class PlaylistView(APIView):
             playlist.delete()
             status = 200
             message = '요청 성공'
+
             response = {
                 'message': message
             }
             return Response(response, status=status)
+
+
+class SongsView(APIView):
+
+    def post(self, request):
+        name = request.data.get('name', None)
+        video_id = request.data.get('video_id', None)
+        thumbnail = request.data.get('thumbnail', None)
+        playlist_id = request.data.get('playlist_id', None)
+
+        if name is None or \
+            video_id is None or \
+            thumbnail is None:
+            # 필드에 문제가 있을 경우
+            status = 400
+            message = '잘못된 요청입니다.'
+            return Response({'message': message}, status=status)
+
+        song = Song.objects.create(
+            name=name,
+            video_id=video_id,
+            thumbnail=thumbnail
+        )
+
+        if playlist_id is not None:
+            # request 필드에 playlist_id가 있을 경우
+            try:
+                # 해당 id의 Playlist 오브젝트가 있는지 검사
+                playlist = Playlist.objects.get(id=playlist_id)
+
+            except:
+                # 없을 경우 404 리턴
+                status = 404
+                message = '존재하지 않는 Playlist 오브젝트입니다.'
+                return Response({'message': message}, status=status)
+
+            else:
+                # 있을 경우 생성한 Song 오브젝트에 추가
+                song.playlists.add(playlist)
+
+        status = 201
+        message = "요청 성공"
+        serializer = SongSerializer(song)
+        response = {
+            'message': message,
+            'data': serializer.data
+        }
+        return Response(response, status=status)
