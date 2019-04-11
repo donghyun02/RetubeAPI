@@ -344,6 +344,27 @@ class SongViewTests(TestCase):
             'HTTP_AUTHORIZATION': 'Bearer {}'.format(jwt)
         }
 
+    def test_patch_no_playlist_id_field(self):
+        """
+        Song View PATCH 요청에서 playlist_id 필드가 없을 경우
+        """
+        song = Song.objects.create(
+            name="testname",
+            video_id="testvideoid",
+            thumbnail="testthumbnail"
+        )
+        url = resolve_url('song', song_id=song.id)
+        response = self.client.patch(
+            url,
+            content_type='application/json',
+            **self.headers
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.data.get('message', None),
+            'playlist_id 는 필수 필드입니다.'
+        )
+
     def test_patch_song_object_not_found(self):
         """
         Song View PATCH 요청에서 Song 오브젝트가 존재하지 않을 경우
