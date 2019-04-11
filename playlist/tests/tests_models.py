@@ -75,8 +75,8 @@ class SongTests(TestCase):
             name="Song",
             video_id="test_video_id",
             thumbnail="https://thumbnail.url",
+            playlist_id=playlist.id
         )
-        self.song.playlists.add(playlist)
 
     def test_verbose_name(self):
         """
@@ -102,7 +102,6 @@ class SongTests(TestCase):
         self.assertTrue(field, models.CharField)
         self.assertEqual(field.verbose_name, 'video id')
         self.assertEqual(field.max_length, 32)
-        self.assertTrue(field._unique)
 
     def test_thumbnail_field(self):
         """
@@ -112,13 +111,13 @@ class SongTests(TestCase):
         self.assertTrue(field, models.TextField)
         self.assertEqual(field.verbose_name, 'thumbnail')
 
-    def test_playlists_field(self):
+    def test_playlist_field(self):
         """
-        playlists 필드 테스트
+        playlist 필드 테스트
         """
-        field = self.song._meta.get_field('playlists')
-        self.assertTrue(field, models.ManyToManyField)
-        self.assertEqual(field.verbose_name, 'playlists')
+        field = self.song._meta.get_field('playlist')
+        self.assertTrue(field, models.ForeignKey)
+        self.assertEqual(field.verbose_name, 'playlist')
         self.assertEqual(field.related_model, Playlist)
 
     def test_created_field(self):
@@ -136,10 +135,10 @@ class SongTests(TestCase):
         """
         self.assertEqual(str(self.song), self.song.name)
 
-    def test_indexed_fields(self):
-        """
-        인덱싱 필드 테스트
-        """
-        video_id_index = models.Index(fields=['video_id']).fields
-        indexes = (index.fields for index in self.song._meta.indexes)
-        self.assertTrue(video_id_index in indexes)
+    # def test_indexed_fields(self):
+    #     """
+    #     인덱싱 필드 테스트
+    #     """
+    #     video_id_index = models.Index(fields=['video_id']).fields
+    #     indexes = (index.fields for index in self.song._meta.indexes)
+    #     self.assertTrue(video_id_index in indexes)

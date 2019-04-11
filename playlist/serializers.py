@@ -12,12 +12,12 @@ class SongSerializer(serializers.ModelSerializer):
             'name',
             'video_id',
             'thumbnail',
-            'playlists',
+            'playlist',
             'created',
         )
 
 class PlaylistSerializer(serializers.ModelSerializer):
-    songs = SongSerializer(read_only=True, many=True, allow_null=True)
+    songs = SongSerializer(read_only=True, many=True)
     username = serializers.CharField(read_only=True)
 
     class Meta:

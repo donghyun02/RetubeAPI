@@ -150,14 +150,8 @@ class SongsView(APIView):
             message = '잘못된 요청입니다.'
             return Response({'message': message}, status=status)
 
-        song = Song.objects.create(
-            name=name,
-            video_id=video_id,
-            thumbnail=thumbnail
-        )
-
         if playlist_id is not None:
-            # request 필드에 playlist_id가 있을 경우
+            # request 필드에 playlist_id 가 있을 경우
             try:
                 # 해당 id의 Playlist 오브젝트가 있는지 검사
                 playlist = Playlist.objects.get(id=playlist_id)
@@ -170,7 +164,20 @@ class SongsView(APIView):
 
             else:
                 # 있을 경우 생성한 Song 오브젝트에 추가
-                song.playlists.add(playlist)
+                song = Song.objects.create(
+                    name=name,
+                    video_id=video_id,
+                    thumbnail=thumbnail,
+                    playlist_id=playlist.id
+                )
+
+        else:
+            # request 필드에 playlist_id 가 없을 경우
+            song = Song.objects.create(
+                name=name,
+                video_id=video_id,
+                thumbnail=thumbnail
+            )
 
         status = 201
         message = "요청 성공"
@@ -182,7 +189,26 @@ class SongsView(APIView):
         return Response(response, status=status)
 
 
-class SongView(APIView):
-
-    def patch(self, request, song_id):
-        pass
+# class SongView(APIView):
+#
+#     def patch(self, request, song_id):
+#         try:
+#             # Song 오브젝트가 있는 지 검사
+#             song = Song.objects.select_related('playlists').get(id=song_id)
+#
+#         except:
+#             # 없을 경우 404 리턴
+#             status = 404
+#             message = '존재하지 않는 Song 오브젝트입니다.'
+#             return Response({'message': message}, status=status)
+#
+#         playlist_id = request.data.get('playlist_id', None)
+#
+#         if playlist_id is None:
+#             # playlist_id 필드가 없을 경우 400 리턴
+#             status = 400
+#             message = 'playlist_id 는 필수 필드입니다.'
+#             return Response({'message': message}, status=status)
+#
+#
+#

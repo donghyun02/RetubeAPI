@@ -15,19 +15,16 @@ class Playlist(models.Model):
 
 class Song(models.Model):
     name = models.CharField(max_length=256)
-    video_id = models.CharField(max_length=32, unique=True)
+    video_id = models.CharField(max_length=32)
     thumbnail = models.TextField()
-    playlists = models.ManyToManyField(
+    playlist = models.ForeignKey(
         Playlist,
         related_name="songs",
+        on_delete=models.CASCADE,
+        null=True,
         blank=True
     )
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
-
-    class Meta:
-        indexes = [
-            models.Index(fields=['video_id']),
-        ]
