@@ -145,38 +145,35 @@ class SongsView(APIView):
         if name is None or \
             video_id is None or \
             thumbnail is None:
-            # 필드에 문제가 있을 경우
+            # 필드에 문제가 있을 경우 400 리턴
+
             status = 400
             message = '잘못된 요청입니다.'
             return Response({'message': message}, status=status)
 
-        if playlist_id is not None:
-            # request 필드에 playlist_id 가 있을 경우
-            try:
-                # 해당 id의 Playlist 오브젝트가 있는지 검사
-                playlist = Playlist.objects.get(id=playlist_id)
+        if playlist_id is None:
+            # request 필드에 playlist_id 가 없을 경우 400 리턴
+            status = 400
+            message = 'playlist_id 는 필수 필드입니다.'
+            return Response({'message': message}, status=status)
 
-            except:
-                # 없을 경우 404 리턴
-                status = 404
-                message = '존재하지 않는 Playlist 오브젝트입니다.'
-                return Response({'message': message}, status=status)
+        try:
+            # 해당 id의 Playlist 오브젝트가 있는지 검사
+            playlist = Playlist.objects.get(id=playlist_id)
 
-            else:
-                # 있을 경우 생성한 Song 오브젝트에 추가
-                song = Song.objects.create(
-                    name=name,
-                    video_id=video_id,
-                    thumbnail=thumbnail,
-                    playlist_id=playlist.id
-                )
+        except:
+            # 없을 경우 404 리턴
+            status = 404
+            message = '존재하지 않는 Playlist 오브젝트입니다.'
+            return Response({'message': message}, status=status)
 
         else:
-            # request 필드에 playlist_id 가 없을 경우
+            # 있을 경우 생성한 Song 오브젝트에 추가
             song = Song.objects.create(
                 name=name,
                 video_id=video_id,
-                thumbnail=thumbnail
+                thumbnail=thumbnail,
+                playlist_id=playlist.id
             )
 
         status = 201
@@ -192,4 +189,17 @@ class SongsView(APIView):
 class SongView(APIView):
 
     def delete(self, request, song_id):
-        pass
+        try:
+            song = Song.objects.get(id=song_id)
+
+        except:
+            status = 404
+            message = '존재하지 않는 Song 오브젝트입니다.'
+            return Response({'message': message}, status=status)
+
+        else:
+            song.delete()
+
+            status = 200
+            message = '재생목록에서 삭제되었습니다.'
+            return Response({'message': message}, status=status)

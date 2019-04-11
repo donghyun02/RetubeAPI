@@ -279,7 +279,7 @@ class SongsViewTests(TestCase):
 
     def test_post_success_without_playlist_id(self):
         """
-        Songs View POST 요청에 playlist_id가 없이 성공할 경우
+        Songs View POST 요청에 playlist_id가 없을 경우
         """
         video_id = 'testvideoid'
         data = {
@@ -294,13 +294,11 @@ class SongsViewTests(TestCase):
             content_type='application/json',
             **self.headers
         )
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.data.get('message', None),
-            '요청 성공'
+            'playlist_id 는 필수 필드입니다.'
         )
-        song = Song.objects.get(video_id=video_id)
-        self.assertNotEqual(song.playlist, self.playlist)
 
     def test_post_success(self):
         """
@@ -360,9 +358,10 @@ class SongViewTests(TestCase):
         """
         Song View DELETE 요청 성공 시
         """
+        video_id = 'testvideooid'
         song = Song.objects.create(
             name="testname",
-            video_id="testvideooid",
+            video_id=video_id,
             thumbnail="testthumbnail"
         )
         url = resolve_url('song', song_id=song.id)
@@ -372,3 +371,4 @@ class SongViewTests(TestCase):
             response.data.get('message', None),
             '재생목록에서 삭제되었습니다.'
         )
+        self.assertFalse(Song.objects.filter(video_id=video_id).exists())
