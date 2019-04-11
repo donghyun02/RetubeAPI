@@ -325,3 +325,111 @@ class SongsViewTests(TestCase):
         self.assertTrue(Song.objects.filter(video_id="testvideoid").exists())
         song = Song.objects.get(video_id=video_id)
         self.assertEqual(song.playlists.count(), 1)
+
+
+class SongViewTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testusername",
+            password="testpassword",
+            first_name="testfirstname"
+        )
+        self.playlist = Playlist.objects.create(
+            name="Test Playlist",
+            owner=self.user
+        )
+        jwt = str(RefreshToken.for_user(self.user).access_token)
+        self.headers = {
+            'HTTP_AUTHORIZATION': 'Bearer {}'.format(jwt)
+        }
+
+    def test_patch_song_object_not_found(self):
+        """
+        Song View PATCH 요청에서 Song 오브젝트가 존재하지 않을 경우
+        """
+        url = resolve_url('song', song_id=15)
+        response = self.client.patch(url, **self.headers)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(
+            response.data.get('message', None),
+            '존재하지 않는 Song 오브젝트입니다.'
+        )
+
+    def test_patch_playlist_object_not_found(self):
+        """
+        Song View PATCH 요청애서 Playlist 오브젝트가 존재하지 않을 경우
+        """
+        song = Song.objects.create(
+            name="testname",
+            video_id="testvideoid",
+            thumbnail="testthumbnail"
+        )
+        data = {
+            'playlist_id': 15
+        }
+        url = resolve_url('song', song_id=song.id)
+        response = self.client.patch(
+            url,
+            data=data,
+            content_type='application/json',
+            **self.headers
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(
+            response.data.get('message', None),
+            '존재하지 않는 Playlist 오브젝트입니다.'
+        )
+
+    def test_patch_add_playlist_success(self):
+        song = Song.objects.create(
+            name="testname",
+            video_id="testvideoid",
+            thumbnail="testthumbnail"
+        )
+        data = {
+            'playlist_id': self.playlist.id
+        }
+        url = resolve_url('song', song_id=song.id)
+
+        self.assertEqual(song.playlists.count(), 0)
+        response = self.client.patch(
+            url,
+            data=data,
+            content_type='application/json',
+            **self.headers
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data.get('message', None),
+            '재생목록에 추가되었습니다.'
+        )
+        song.refresh_from_db()
+        self.assertEqual(song.playlists.count(), 1)
+
+    def test_patch_remove_playlist_success(self):
+        song = Song.objects.create(
+            name="testname",
+            video_id="testvideo_id",
+            thumbnail="testthumbnail"
+        )
+        song.playlists.add(self.playlist)
+        data = {
+            'playlist_id': self.playlist.id
+        }
+        url = resolve_url('song', song_id=song.id)
+
+        self.assertEqual(song.playlists.count(), 1)
+        response = self.client.patch(
+            url,
+            data=data,
+            content_type='application/json',
+            **self.headers
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data.get('message', None),
+            '재생목록에서 삭제되었습니다.'
+        )
+        song.refresh_from_db()
+        self.assertEqual(song.playlists.count(), 0)

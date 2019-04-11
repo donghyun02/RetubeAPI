@@ -180,3 +180,9 @@ class SongsView(APIView):
             'data': serializer.data
         }
         return Response(response, status=status)
+
+
+class SongView(APIView):
+
+    def patch(self, request, song_id):
+        pass
