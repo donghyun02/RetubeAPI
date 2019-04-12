@@ -176,14 +176,14 @@ class SongsView(APIView):
                 playlist_id=playlist.id
             )
 
-        status = 201
-        message = "요청 성공"
-        serializer = SongSerializer(song)
-        response = {
-            'message': message,
-            'data': serializer.data
-        }
-        return Response(response, status=status)
+            status = 201
+            message = "요청 성공"
+            serializer = SongSerializer(song)
+            response = {
+                'message': message,
+                'data': serializer.data
+            }
+            return Response(response, status=status)
 
 
 class SongView(APIView):
