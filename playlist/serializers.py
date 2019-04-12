@@ -12,6 +12,7 @@ class SongSerializer(serializers.ModelSerializer):
             'name',
             'video_id',
             'thumbnail',
+            'order',
             'playlist',
             'created',
         )

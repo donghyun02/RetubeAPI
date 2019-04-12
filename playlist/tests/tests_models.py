@@ -138,11 +138,17 @@ class SongTests(TestCase):
         self.assertEqual(field.verbose_name, 'created')
         self.assertTrue(field.auto_now_add)
 
-    def test_str_(self):
+    def test_str(self):
         """
         __str__ 매직 메서드 테스트
         """
         self.assertEqual(str(self.song), self.song.name)
+
+    def test_meta_ordering(self):
+        """
+        Song 모델 ordering 테스트
+        """
+        self.assertEqual('order', Song._meta.ordering[0])
 
     # def test_indexed_fields(self):
     #     """
