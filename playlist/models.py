@@ -17,6 +17,7 @@ class Song(models.Model):
     name = models.CharField(max_length=256)
     video_id = models.CharField(max_length=32)
     thumbnail = models.TextField()
+    order = models.PositiveIntegerField(default=0)
     playlist = models.ForeignKey(
         Playlist,
         related_name="songs",

@@ -90,7 +90,7 @@ class SongTests(TestCase):
         name 필드 테스트
         """
         field = self.song._meta.get_field('name')
-        self.assertTrue(field, models.CharField)
+        self.assertTrue(isinstance(field, models.CharField))
         self.assertEqual(field.verbose_name, 'name')
         self.assertEqual(field.max_length, 256)
 
@@ -99,7 +99,7 @@ class SongTests(TestCase):
         video_id 필드 테스트
         """
         field = self.song._meta.get_field('video_id')
-        self.assertTrue(field, models.CharField)
+        self.assertTrue(isinstance(field, models.CharField))
         self.assertEqual(field.verbose_name, 'video id')
         self.assertEqual(field.max_length, 32)
 
@@ -108,15 +108,24 @@ class SongTests(TestCase):
         thumbnail 필드 테스트
         """
         field = self.song._meta.get_field('thumbnail')
-        self.assertTrue(field, models.TextField)
+        self.assertTrue(isinstance(field, models.TextField))
         self.assertEqual(field.verbose_name, 'thumbnail')
+
+    def test_order_field(self):
+        """
+        order 필드 테스트
+        """
+        field = self.song._meta.get_field('order')
+        self.assertTrue(isinstance(field, models.PositiveIntegerField))
+        self.assertEqual(field.verbose_name, 'order')
+        self.assertEqual(field.default, 0)
 
     def test_playlist_field(self):
         """
         playlist 필드 테스트
         """
         field = self.song._meta.get_field('playlist')
-        self.assertTrue(field, models.ForeignKey)
+        self.assertTrue(isinstance(field, models.ForeignKey))
         self.assertEqual(field.verbose_name, 'playlist')
         self.assertEqual(field.related_model, Playlist)
 
@@ -125,7 +134,7 @@ class SongTests(TestCase):
         created 필드 테스트
         """
         field = self.song._meta.get_field('created')
-        self.assertTrue(field, models.DateTimeField)
+        self.assertTrue(isinstance(field, models.DateTimeField))
         self.assertEqual(field.verbose_name, 'created')
         self.assertTrue(field.auto_now_add)
 
